@@ -92,12 +92,20 @@ cat > real-proof/input.json <<EOF
 }
 EOF
 ```
+### 1a
+```bash
+cd real-proof
+```
 
 ### 2. Generate Witness & Proof
 
 ```bash
 snarkjs wtns calculate sum.wasm input.json witness.wtns
 snarkjs groth16 prove sum.zkey witness.wtns proof.json public.json
+```
+### 2b.
+```bash
+cd ..
 ```
 
 ### 3. Move Files for API Submission
@@ -113,7 +121,7 @@ mv proof.json public.json verification_key.json ../data/
 ### 1. Install Dependencies
 
 ```bash
-cd ..
+
 npm init -y && npm pkg set type=module
 npm install axios dotenv
 ```
