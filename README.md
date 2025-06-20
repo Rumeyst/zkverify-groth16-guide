@@ -122,6 +122,9 @@ mv proof.json public.json verification_key.json ../data/
 ## 🌐 Submit to zkVerify Relayer API
 
 ### 1. Install Dependencies
+```bash
+cd ..
+```
 
 ```bash
 
