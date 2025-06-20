@@ -83,6 +83,10 @@ snarkjs zkey export verificationkey sum.zkey verification_key.json
 ## 📊 Generate Proofs
 
 ### 1. Create Input File inside `real-proof`: `input.json`
+ ### a.
+```bash
+cd ..
+```
 
 ```bash
 cat > real-proof/input.json <<EOF
@@ -92,21 +96,20 @@ cat > real-proof/input.json <<EOF
 }
 EOF
 ```
-### 1a
+
+### 2. Generate Witness & Proof
+
+ ### b.
 ```bash
 cd real-proof
 ```
-
-### 2. Generate Witness & Proof
 
 ```bash
 snarkjs wtns calculate sum.wasm input.json witness.wtns
 snarkjs groth16 prove sum.zkey witness.wtns proof.json public.json
 ```
-### 2b.
-```bash
-cd ..
-```
+
+
 
 ### 3. Move Files for API Submission
 
