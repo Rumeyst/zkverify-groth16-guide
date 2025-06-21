@@ -101,6 +101,7 @@ cat .env
 ```
 3️⃣ Create index.js
 ```
+cat << 'EOF' > index.js
 import axios from 'axios';
 import fs from 'fs';
 import dotenv from 'dotenv';
@@ -154,6 +155,8 @@ async function main() {
 }
 
 main();
+EOF
+
 ```
 4️⃣ Run the Script
 ```
