@@ -1,37 +1,28 @@
-# zkverify-groth16-guide
-
-
 # 🔐 zkVerify Proof Submission Guide (Groth16 + Relayer API)
 
-> ✅ A 100% working and tested tutorial for generating, proving, and submitting ZK proofs to [zkVerify](https://points.zkverify.io/loyalty) using Circom, SnarkJS, and the zkVerify Relayer API.
+> ✅ Working and tested tutorial for generating, proving, and submitting ZK proofs to [zkVerify](https://points.zkverify.io/loyalty) using Circom, SnarkJS, and the zkVerify Relayer API.
 
 ---
 
-## 📦 Prerequisites
+# Prerequisites
 
-- Node.js v18+ (v20+ tested)
+- Node.js v18+ (v20+ recommended)
 - Circom + SnarkJS globally installed
 - API key from zkVerify (default one included)
 
-### ✅ Install Tools
+# ✅ Install Tools
 
-```bash
+```
 npm install -g circom
 sudo npm install -g snarkjs
-````
-
----
-
-## 🛠 Project Setup
-
-```bash
+```
+# Project Setup
+```
 mkdir zkverify-relayer && cd zkverify-relayer
 mkdir data real-proof
 ```
-
-### 🧩 Create Circuit: `real-proof/sum.circom`
-
-```bash
+# Create Circuit: real-proof/sum.circom
+```
 cat > real-proof/sum.circom <<'EOF'
 template SumCircuit() {
     signal input a;
@@ -44,51 +35,33 @@ template SumCircuit() {
 component main = SumCircuit();
 EOF
 ```
-
----
-
-## 🔧 Compile & Generate Proof
-
-### 1. Compile Circuit
-
-```bash
+# Compile & Generate Proof
+1️⃣Compile Circuit
+```
 cd real-proof
 circom sum.circom --r1cs --wasm --sym -o .
 ```
-
-### 2. Powers of Tau Ceremony
-
-```bash
+2️⃣ Powers of Tau Ceremony
+```
 snarkjs powersoftau new bn128 12 pot12_0000.ptau -v
 snarkjs powersoftau contribute pot12_0000.ptau pot12_0001.ptau --name="My Contribution" -v
 snarkjs powersoftau prepare phase2 pot12_0001.ptau pot12_final.ptau
 ```
+📌 Note: Enter any random text when prompted (used as entropy).
 
-📌 Enter any random text when prompted (used as entropy).
-
-### 3. Setup Groth16
-
-```bash
+3️⃣ Setup Groth16
+```
 snarkjs groth16 setup sum.r1cs pot12_final.ptau sum.zkey
 ```
-
-### 4. Export Verification Key
-
-```bash
+4️⃣ Export Verification Key
+```
 snarkjs zkey export verificationkey sum.zkey verification_key.json
 ```
+# Generate Proofs
 
----
-
-## 📊 Generate Proofs
-
-### 1. Create Input File inside `real-proof`: `input.json`
- ### a.
-```bash
-cd ..
+1️⃣ Create Input File (input.json)
 ```
-
-```bash
+cd ..
 cat > real-proof/input.json <<EOF
 {
   "a": "3",
@@ -96,61 +69,38 @@ cat > real-proof/input.json <<EOF
 }
 EOF
 ```
-
-### 2. Generate Witness & Proof
-
- ### b.
-```bash
-cd real-proof
+2️⃣ Generate Witness & Proof
 ```
-
-```bash
+cd real-proof
 snarkjs wtns calculate sum.wasm input.json witness.wtns
 snarkjs groth16 prove sum.zkey witness.wtns proof.json public.json
 ```
-
-
-
-### 3. Move Files for API Submission
-
-```bash
+3️⃣ Move Files for API Submission
+```
 mv proof.json public.json verification_key.json ../data/
 ```
+# Submit to zkVerify Relayer API
 
----
-
-## 🌐 Submit to zkVerify Relayer API
-
-### 1. Install Dependencies
-```bash
-cd ..
+1️⃣ Install Dependencies
 ```
-
-```bash
-
+cd ..
 npm init -y && npm pkg set type=module
 npm install axios dotenv
 ```
-
-### 2. Create `.env` File
-
-```bash
+2️⃣ Create .env File
+```
 echo "API_KEY=598f259f5f5d7476622ae52677395932fa98901f" > .env
 ```
+✅ This API key is the default public key from the zkVerify docs.
 
-✅ This API key is the **default public key** from the zkVerify docs.
-👉 You can also request your **own API key** from the [zkVerify Discord](https://discord.gg/k5cPGcUBY2) or the [official docs](https://points.zkverify.io/docs).
+👉 Need your own key? Request one from: [zkVerify Discord](https://discord.gg/k5cPGcUBY2) or the [official docs](https://points.zkverify.io/docs)
 
-Verify it was created:
-
-```bash
+Verify creation:
+```
 cat .env
 ```
-
-### 3. Create `index.js`
-
-```bash
-cat > index.js << 'EOF'
+3️⃣ Create index.js
+```
 import axios from 'axios';
 import fs from 'fs';
 import dotenv from 'dotenv';
@@ -187,7 +137,7 @@ async function main() {
             return;
         }
 
-        // Wait until finalized
+        // Poll for status
         while (true) {
             const status = await axios.get(`${API_URL}/job-status/${process.env.API_KEY}/${jobId}`);
             console.log("🔁 Status:", status.data.status);
@@ -204,18 +154,15 @@ async function main() {
 }
 
 main();
-EOF
 ```
-
-### 4. Run the Script
-
-```bash
+4️⃣ Run the Script
+```
 node index.js
 ```
 
 ---
 
-## 🏁 Claim Your Points
+##  Claim Your Points
 
 1. Visit: [https://forms.gle/PVjhLkDt2TbgmspGA](https://forms.gle/PVjhLkDt2TbgmspGA)
 2. Submit:
@@ -235,16 +182,16 @@ node index.js
 | 500              | 200        |
 | **1000+**        | **500** 🚀 |
 
-🔁 You can keep submitting by changing values in `real-proof/input.json`.
+🔁 change values in `real-proof/input.json`. to submit multiple proofs
 
 ---
 
-## 🧠 Bonus Tips
+##  Bonus Tips
 
 * Submit feedback for extra 50 pts: [https://forms.gle/PVjhLkDt2TbgmspGA](https://forms.gle/PVjhLkDt2TbgmspGA)
 
----
 
-### ❤️ Built by [@rumeyst](https://github.com/rumeyst)
+
+
 
 
