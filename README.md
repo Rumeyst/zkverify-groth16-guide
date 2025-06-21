@@ -11,6 +11,9 @@
 - API key from zkVerify (default one included)
 
 # ✅ Install Tools
+```
+sudo su
+```
 
 ```
 npm install -g circom
